@@ -1,0 +1,12 @@
+[package]
+name = "basilisk-common"
+version = "0.21.1"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/Nimblesite/Basilisk"
+rust-version = "1.87"
+description = "Shared constants and types for Basilisk — compiles to native and wasm32-wasip1"
+
+[dependencies]
+# Intentionally zero dependencies — this crate must compile to WASM.
+

@@ -1,0 +1,18 @@
+[package]
+name = "basilisk-zed"
+version = "0.21.1"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+zed_extension_api = "0.7.0"
+serde_json = "1"
+# Shared constants with the LSP — zero-dependency, WASM-compatible.
+basilisk-common = { path = "vendor/basilisk-common" }
+
+# The mirror is its own workspace root so cargo does not search
+# upward for a parent workspace when the registry builds it standalone.
+[workspace]
