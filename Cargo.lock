@@ -28,11 +28,11 @@ dependencies = [
 
 [[package]]
 name = "basilisk-common"
-version = "0.21.1"
+version = "0.21.2"
 
 [[package]]
 name = "basilisk-zed"
-version = "0.21.1"
+version = "0.21.2"
 dependencies = [
  "basilisk-common",
  "serde_json",

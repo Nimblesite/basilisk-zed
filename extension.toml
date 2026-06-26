@@ -1,6 +1,6 @@
 id = "basilisk"
 name = "Basilisk"
-version = "0.21.1"
+version = "0.21.2"
 schema_version = 1
 authors = ["Basilisk Contributors"]
 description = "Strict-by-default Python type checker with debugging and profiling"
