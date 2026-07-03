@@ -1,6 +1,10 @@
+# Crate manifest. Implements [ZED-CARGOTOML]: cdylib compiled to wasm32-wasip2.
+# version is 0.0.0-PLACEHOLDER on every monorepo commit and is stamped only
+# during CI; the registry mirror rewrites the basilisk-common path dep — see
+# [ZED-MIRROR].
 [package]
 name = "basilisk-zed"
-version = "0.23.0"
+version = "0.25.0"
 edition = "2021"
 publish = false
 
