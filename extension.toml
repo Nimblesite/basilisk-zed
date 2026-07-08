@@ -2,10 +2,10 @@
 # stamped only during CI per [ZED-CARGOTOML] / [ZED-MIRROR].
 id = "basilisk"
 name = "Basilisk"
-version = "0.31.0"
+version = "0.32.0"
 schema_version = 1
 authors = ["Basilisk Contributors"]
-description = "Strict-by-default Python type checker with debugging and profiling"
+description = "The only Python type checker with a perfect 100% score on the official python/typing conformance results (https://github.com/python/typing/blob/main/conformance/results/results.html). Strict by default, with debugging and profiling."
 repository = "https://github.com/Nimblesite/Basilisk"
 
 # No [grammars.python] block: the language below reuses Zed's built-in
