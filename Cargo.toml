@@ -4,7 +4,7 @@
 # [ZED-MIRROR].
 [package]
 name = "basilisk-zed"
-version = "0.34.0"
+version = "0.35.0"
 edition = "2021"
 publish = false
 

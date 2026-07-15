@@ -2,7 +2,7 @@
 # stamped only during CI per [ZED-CARGOTOML] / [ZED-MIRROR].
 id = "basilisk"
 name = "Basilisk"
-version = "0.34.0"
+version = "0.35.0"
 schema_version = 1
 authors = ["Basilisk Contributors"]
 description = "The only Python type checker scoring 100% on the official python/typing conformance suite (https://github.com/python/typing/blob/main/conformance/results/results.html) — and the fastest we've measured. Complete open-source Python dev environment in Rust: type checker, language server, debugger, profiler, plus VS Code, Cursor, Zed & Neovim extensions. Strict by default."
