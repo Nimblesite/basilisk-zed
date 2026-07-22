@@ -175,6 +175,16 @@ pub mod commands {
 /// dependency-free common crate lets every editor use the exact server contract
 /// without copying method names.
 pub mod configuration_editor {
+    /// Client-registered command that opens the configuration editor UI.
+    ///
+    /// Unlike [`crate::commands::ALL`] this is NOT a server-executed command:
+    /// the editor host (VS Code) registers it, capability-gated on the
+    /// server's `configurationEditor` capability. The server references it in
+    /// hover markdown command links (`command:` URIs) so a diagnostic can
+    /// deep-link into the editor ([CONFIGEDITOR-VSIX-EXPERIENCE]). An optional
+    /// `{ "rule": "BSK-XXXX" }` argument focuses that rule on open.
+    pub const OPEN_EDITOR_COMMAND: &str = "basilisk.openConfigurationEditor";
+
     /// Read the resolved configuration, catalog, and workspace impact.
     pub const SNAPSHOT: &str = "basilisk/configurationSnapshot";
     /// Validate and analyse a configuration mutation without writing it.
@@ -183,6 +193,12 @@ pub mod configuration_editor {
     pub const APPLY: &str = "basilisk/applyConfigurationChange";
     /// Page through diagnostics selected by the all/codes/tags selectors.
     pub const OCCURRENCES: &str = "basilisk/ruleOccurrences";
+    /// Pin, refresh, or view the active Typeshed source.
+    pub const TYPESHED_ACTION: &str = "basilisk/typeshedAction";
+    /// Read one immutable document from the active Typeshed VFS.
+    pub const TYPESHED_DOCUMENT: &str = "basilisk/typeshedDocument";
+    /// Notify clients that a root activated a new terminal Typeshed status.
+    pub const TYPESHED_STATUS_CHANGED: &str = "basilisk/typeshedStatusChanged";
     /// Notify clients that a root's effective configuration changed.
     pub const CHANGED: &str = "basilisk/configurationChanged";
 }
@@ -222,8 +238,22 @@ pub mod slash_commands {
 
 /// Configuration key names shared between editor extensions and the LSP.
 ///
-/// These appear in both VS Code's `package.json` contributes and Zed's
-/// `language_server_workspace_configuration()`.
+/// A key earns a constant here when more than one consumer needs its exact
+/// spelling: VS Code's `package.json` `contributes.configuration`, Zed's
+/// `language_server_workspace_configuration()` (`basilisk-zed/src/logic.rs`),
+/// and the LSP server that reads the resulting payload.
+///
+/// The two editors do **not** expose the same surface, so every constant below
+/// says which side it belongs to. Those marked *Zed-only* have no
+/// `vscode-extension/package.json` entry at all; three of them name a knob VS
+/// Code contributes under a different spelling (`funcThreshold` vs
+/// `functionThreshold`, `maxDiagnostics` vs `maxDiagnosticsPerFile`,
+/// `autoOnLaunch` vs `profileOnLaunch`). Renaming them here would change the
+/// settings payload Zed already ships, so the divergence is recorded rather
+/// than papered over. Settings only VS Code contributes (`analysisMode`,
+/// `binaries.*`, `formatter`, `python`, `trace.server`, the profiler's
+/// `showInlineHeatMap`/`autoSnapshot*`, …) have no constant because no second
+/// consumer needs their spelling.
 pub mod config_keys {
     /// Root key for all Basilisk settings.
     pub const ROOT: &str = "basilisk";
@@ -235,9 +265,10 @@ pub mod config_keys {
     /// Show variable type hints.
     pub const VAR_TYPES: &str = "variableTypes";
 
-    /// Ruff integration configuration section.
+    /// Ruff integration configuration section. Zed-only.
     pub const RUFF: &str = "ruff";
-    /// Enable/disable Ruff integration.
+    /// Enable/disable Ruff integration. Zed-only — VS Code contributes no
+    /// `basilisk.ruff.*` setting (formatting is embedded, [LSPFMT-ENGINE]).
     pub const RUFF_ENABLED: &str = "enabled";
 
     /// uv package manager configuration section.
@@ -267,7 +298,8 @@ pub mod config_keys {
 
     /// CPU profiler configuration section.
     pub const PROFILER: &str = "profiler";
-    /// Enable CPU profiling features.
+    /// Enable CPU profiling features. Zed-only — VS Code has no
+    /// `basilisk.profiler.enabled`; the feature is gated per command there.
     pub const PROFILER_ENABLED: &str = "enabled";
     /// Samples per second (Hz). Default: 100.
     pub const PROFILER_SAMPLE_RATE: &str = "sampleRate";
@@ -278,21 +310,29 @@ pub mod config_keys {
     /// Per-line hotspot threshold as a fraction (0.0–1.0). Default: 0.01 (1%).
     pub const PROFILER_LINE_THRESHOLD: &str = "lineThreshold";
     /// Per-function hotspot threshold as a fraction (0.0–1.0). Default: 0.02 (2%).
+    /// Zed-only spelling of the knob VS Code contributes as `functionThreshold`.
     pub const PROFILER_FUNC_THRESHOLD: &str = "funcThreshold";
-    /// Maximum number of hotspot diagnostics per file. Default: 20.
+    /// Maximum number of hotspot diagnostics per file. Default: 20. Zed-only
+    /// spelling of the knob VS Code contributes as `maxDiagnosticsPerFile`.
     pub const PROFILER_MAX_DIAGNOSTICS: &str = "maxDiagnostics";
-    /// Automatically start profiling when a debug session launches.
+    /// Automatically start profiling when a debug session launches. Zed-only
+    /// spelling of the knob VS Code contributes as `profileOnLaunch`.
     pub const PROFILER_AUTO_ON_LAUNCH: &str = "autoOnLaunch";
     /// Default export format: `"speedscope"`, `"flamegraph"`, or `"summary"`.
+    /// Zed-only — VS Code picks the format per export command instead.
     pub const PROFILER_DEFAULT_FORMAT: &str = "defaultFormat";
 
-    /// Memory profiler configuration section.
+    /// Memory profiler configuration section. Zed-only.
     pub const MEMORY: &str = "memory";
-    /// Tracemalloc traceback depth for allocation sites. Default: 25.
+    /// Tracemalloc traceback depth for allocation sites. Default: 25. Zed-only —
+    /// VS Code contributes no `basilisk.memory.*` settings.
     pub const MEMORY_TRACEBACK_DEPTH: &str = "tracebackDepth";
     /// Seconds between automatic memory snapshots (0 = disabled). Default: 0.
+    /// Zed-only — VS Code contributes no `basilisk.memory.*` settings.
     pub const MEMORY_AUTO_SNAPSHOT_INTERVAL: &str = "autoSnapshotInterval";
-    /// Maximum number of memory allocation diagnostic entries per file. Default: 10.
+    /// Maximum number of memory allocation diagnostic entries per file.
+    /// Default: 10. Zed-only — VS Code contributes no `basilisk.memory.*`
+    /// settings.
     pub const MEMORY_MAX_DIAGNOSTICS: &str = "maxDiagnostics";
 }
 

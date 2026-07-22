@@ -1,6 +1,6 @@
 [package]
 name = "basilisk-common"
-version = "0.35.0"
+version = "0.37.2"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/Nimblesite/Basilisk"
